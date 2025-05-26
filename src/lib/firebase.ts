@@ -20,7 +20,6 @@ const firebaseConfig = {
   storageBucket: "daily-tasks-a490b.firebasestorage.app",
   messagingSenderId: "118606834003",
   appId: "1:118606834003:web:486c7c20a89a00326a59a6",
-  measurementId: "G-4HJZ7WFHMB",
 };
 
 // Initialize Firebase
