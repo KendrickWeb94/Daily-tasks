@@ -1,17 +1,22 @@
-import { useState, useEffect } from 'react';
-import { Task } from '@/types/Task';
-import { TaskService } from '@/services/TaskService';
-import { useAuth } from '@/contexts/AuthContext';
-import TaskItem from './TaskItem';
-import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Separator } from '@/components/ui/separator';
+import { useState, useEffect } from "react";
+import { Task } from "@/types/Task";
+import { TaskService } from "@/services/TaskService";
+import { useAuth } from "@/contexts/AuthContext";
+import TaskItem from "./TaskItem";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Separator } from "@/components/ui/separator";
+import TaskReminder from "./TaskReminder";
 
 export default function TaskList() {
   const { currentUser } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showCompleted, setShowCompleted] = useState(false);
 
   const fetchTasks = async () => {
@@ -21,10 +26,10 @@ export default function TaskList() {
     try {
       const fetchedTasks = await TaskService.getTasks(currentUser.uid);
       setTasks(fetchedTasks);
-      setError('');
+      setError("");
     } catch (error) {
-      console.error('Error fetching tasks:', error);
-      setError('Failed to load tasks. Please try again.');
+      console.error("Error fetching tasks:", error);
+      setError("Failed to load tasks. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -34,13 +39,15 @@ export default function TaskList() {
     fetchTasks();
   }, [currentUser]);
 
-  const activeTasks = tasks.filter(task => !task.completed);
-  const completedTasks = tasks.filter(task => task.completed);
+  const activeTasks = tasks.filter((task) => !task.completed);
+  const completedTasks = tasks.filter((task) => task.completed);
 
   if (!currentUser) {
     return (
       <div className="text-center p-8">
-        <p className="text-muted-foreground">Please sign in to view your tasks.</p>
+        <p className="text-muted-foreground">
+          Please sign in to view your tasks.
+        </p>
       </div>
     );
   }
@@ -64,23 +71,30 @@ export default function TaskList() {
   if (tasks.length === 0) {
     return (
       <div className="text-center p-8">
-        <p className="text-muted-foreground">You don't have any tasks yet. Add your first task to get started!</p>
+        <p className="text-muted-foreground">
+          You don't have any tasks yet. Add your first task to get started!
+        </p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      <TaskReminder tasks={tasks} />
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-medium">Active Tasks ({activeTasks.length})</h3>
+          <h3 className="text-lg font-medium">
+            Active Tasks ({activeTasks.length})
+          </h3>
         </div>
 
         {activeTasks.length === 0 ? (
-          <p className="text-muted-foreground text-center py-4">No active tasks. All done!</p>
+          <p className="text-muted-foreground text-center py-4">
+            No active tasks. All done!
+          </p>
         ) : (
           <div className="space-y-2">
-            {activeTasks.map(task => (
+            {activeTasks.map((task) => (
               <TaskItem key={task.id} task={task} onTaskUpdated={fetchTasks} />
             ))}
           </div>
@@ -91,21 +105,29 @@ export default function TaskList() {
 
       <Collapsible open={showCompleted} onOpenChange={setShowCompleted}>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium">Completed Tasks ({completedTasks.length})</h3>
+          <h3 className="text-lg font-medium">
+            Completed Tasks ({completedTasks.length})
+          </h3>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm">
-              {showCompleted ? 'Hide' : 'Show'}
+              {showCompleted ? "Hide" : "Show"}
             </Button>
           </CollapsibleTrigger>
         </div>
 
         <CollapsibleContent className="mt-2">
           {completedTasks.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">No completed tasks yet.</p>
+            <p className="text-muted-foreground text-center py-4">
+              No completed tasks yet.
+            </p>
           ) : (
             <div className="space-y-2 mt-2">
-              {completedTasks.map(task => (
-                <TaskItem key={task.id} task={task} onTaskUpdated={fetchTasks} />
+              {completedTasks.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  onTaskUpdated={fetchTasks}
+                />
               ))}
             </div>
           )}
