@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { TaskService } from '@/services/TaskService';
-import { useAuth } from '@/contexts/AuthContext';
-import { NewTask } from '@/types/Task';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { TaskService } from "@/services/TaskService";
+import { useAuth } from "@/contexts/AuthContext";
+import { NewTask } from "@/types/Task";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 interface TaskFormProps {
   onTaskAdded?: () => void;
@@ -13,34 +13,34 @@ interface TaskFormProps {
 
 export default function TaskForm({ onTaskAdded }: TaskFormProps) {
   const { currentUser } = useAuth();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [deadlineDate, setDeadlineDate] = useState('');
-  const [deadlineTime, setDeadlineTime] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [deadlineDate, setDeadlineDate] = useState("");
+  const [deadlineTime, setDeadlineTime] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {
-      setError('Task title is required');
+      setError("Task title is required");
       return;
     }
 
     if (!currentUser) {
-      setError('You must be logged in to create tasks');
+      setError("You must be logged in to create tasks");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       let deadline: Date | null = null;
 
       if (deadlineDate) {
-        deadline = new Date(`${deadlineDate}T${deadlineTime || '23:59'}`);
+        deadline = new Date(`${deadlineDate}T${deadlineTime || "23:59"}`);
       }
 
       const newTask: NewTask = {
@@ -54,25 +54,25 @@ export default function TaskForm({ onTaskAdded }: TaskFormProps) {
       await TaskService.createTask(newTask);
 
       // Reset form
-      setTitle('');
-      setDescription('');
-      setDeadlineDate('');
-      setDeadlineTime('');
+      setTitle("");
+      setDescription("");
+      setDeadlineDate("");
+      setDeadlineTime("");
 
       // Notify parent component
       if (onTaskAdded) {
         onTaskAdded();
       }
     } catch (error) {
-      console.error('Error adding task:', error);
-      setError('Failed to add task. Please try again.');
+      console.error("Error adding task:", error);
+      setError("Failed to add task. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-4 max-w-sm text-sm w-full">
+    <div className="space-y-4 h-[fit-content] max-w-sm text-sm w-full">
       {error && (
         <div className="p-3 text-sm bg-destructive/10 text-destructive rounded-md">
           {error}
@@ -94,9 +94,7 @@ export default function TaskForm({ onTaskAdded }: TaskFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">
-            Description (optional)
-          </Label>
+          <Label htmlFor="description">Description (optional)</Label>
           <Textarea
             id="description"
             value={description}
@@ -108,22 +106,17 @@ export default function TaskForm({ onTaskAdded }: TaskFormProps) {
 
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="deadline-date">
-              Deadline Date (optional)
-            </Label>
+            <Label htmlFor="deadline-date">Deadline Date (optional)</Label>
             <Input
               type="date"
               id="deadline-date"
               value={deadlineDate}
-
               onChange={(e) => setDeadlineDate(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="deadline-time">
-              Deadline Time (optional)
-            </Label>
+            <Label htmlFor="deadline-time">Deadline Time (optional)</Label>
             <Input
               type="time"
               id="deadline-time"
@@ -133,12 +126,8 @@ export default function TaskForm({ onTaskAdded }: TaskFormProps) {
           </div>
         </div>
 
-        <Button
-          type="submit"
-          disabled={loading}
-          className="w-full"
-        >
-          {loading ? 'Adding Task...' : 'Add Task'}
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? "Adding Task..." : "Add Task"}
         </Button>
       </form>
     </div>
